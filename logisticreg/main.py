@@ -41,20 +41,23 @@ def compute_cost(x,y,theta):
     return J
 
 def gradAscent(dataIn, classLabels):
+    J = []
     dataMatrix = np.mat(dataIn)
     labelMat = np.mat(classLabels).transpose()
     m,n = np.shape(dataMatrix)
     alpha = 0.001
-    maxInter = 500
+    maxInter = 5000
     weights = np.ones((n,1))
     for k in range(maxInter):
         h = sigmoid(dataMatrix * weights)
         error = (labelMat - h)
+        loss = 0.5 * (error.transpose() * error)
         weights = weights + alpha * (dataMatrix).transpose() * error
-    return weights
+        J.append(float(loss))
+    return weights,J
     
     
-
+'''
 def gradient_descent(x,y,theta,alpha,num_iters):
     J_history = np.zeros(shape=(num_iters,1))
     for i in range(num_iters):
@@ -65,6 +68,7 @@ def gradient_descent(x,y,theta,alpha,num_iters):
             theta[j][0] = theta[j][0] - alpha*(sqErrors.transpose() * x[:,j]) 
         J_history[i, 0] = compute_cost(x, y, theta)    
     return theta, J_history
+ '''
  
 def plotBestFit(dataMat, labelMat,wei):
     weights = wei.getA()
@@ -77,7 +81,7 @@ def plotBestFit(dataMat, labelMat,wei):
             xcord1.append(dataArr[i,1]); ycord1.append(dataArr[i,2])
         else:
             xcord2.append(dataArr[i,1]); ycord2.append(dataArr[i,2])
-    fig = plt.figure()
+    fig = plt.figure(1)
     ax = fig.add_subplot(111)
     ax.scatter(xcord1, ycord1, s=30, c='red', marker = 's')
     ax.scatter(xcord2, ycord2, s=30, c='green')
@@ -86,11 +90,19 @@ def plotBestFit(dataMat, labelMat,wei):
     ax.plot(x,y)
     plt.xlabel('X1'); plt.ylabel('X2')
     plt.show()    
+
            
 if __name__ == '__main__':
     train_x, train_y = load_txt('./data/testSet.txt')
-    weights = gradAscent(train_x, train_y)
+    weights,J = gradAscent(train_x, train_y)
     plotBestFit(train_x, train_y, weights)
+    cx = range(len(J))
+    plt.figure(2)
+    plt.plot(cx,J)
+    plt.xlabel('Interator')
+    plt.ylabel('Loss')
+    plt.show()
+    
     
 
 
